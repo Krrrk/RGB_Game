@@ -1,3 +1,5 @@
+import * as PIXI from 'pixi.js'
+
 export { renderSprite, updateSprite };
 
 const char1Texture = PIXI.Texture.from('../assets/images/the_knight/Idle (1).png');
