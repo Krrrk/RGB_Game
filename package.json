@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Krrrk/RGB_Game/issues"
   },
-  "homepage": "https://github.com/Krrrk/RGB_Game#readme"
+  "homepage": "https://github.com/Krrrk/RGB_Game#readme",
+  "dependencies": {
+    "pixi.js": "^7.2.3"
+  }
 }
