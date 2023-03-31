@@ -100,6 +100,7 @@ function loop(delta) {
 		char1Sprite.scale.x = Math.abs(char1Sprite.scale.x);;
 }
 
+
 function fadeOut(rect, duration) {
 	const step = 60 / duration;
 	app.ticker.add(ticker);
