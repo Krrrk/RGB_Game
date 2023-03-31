@@ -1,0 +1,23 @@
+{
+  "name": "rgb_game",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Krrrk/RGB_Game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Krrrk/RGB_Game/issues"
+  },
+  "homepage": "https://github.com/Krrrk/RGB_Game#readme",
+  "dependencies": {
+    "pixi.js": "^7.2.3"
+  }
+}
