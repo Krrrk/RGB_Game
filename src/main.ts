@@ -1,13 +1,10 @@
 // Your main game file (e.g., main.js or index.js)
+import * as PIXI from 'pixi.js';
 
 const Application = PIXI.Application;
 
-const app = new Application({
-	width: 1920,
-	height: 1080,
-	transparent: false,
-	antialias: true
-});
+const app = new PIXI.Application<HTMLCanvasElement>({ width: 640, height: 360 })
+
 import { createBackground, updateBackground } from './background.js';
 
 createBackground(app);
@@ -16,7 +13,6 @@ createBackground(app);
 
 app.renderer.resize(window.innerWidth, window.innerHeight);
 
-app.renderer.view.style.position = 'absolute';
 
 document.body.appendChild(app.view);
 
@@ -47,7 +43,6 @@ char1Sprite.position.set(app.screen.width / 2, app.screen.height / 2);
 char1Sprite.anchor.set(0.5, 0.5);
 
 char1Sprite.interactive = true;
-char1Sprite.buttonmode = true;
 
 char1Sprite.on('pointerdown', function() {
 	char1Sprite.scale.x += 0.1;
