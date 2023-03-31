@@ -6,5 +6,6 @@
 
 
 `npm install`
-`npm run run-dev`
+
+`npm run dev`
 
