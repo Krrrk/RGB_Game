@@ -30,6 +30,12 @@ const char1Sprite = new PIXI.Sprite(char1Texture);
 
 app.stage.addChild(char1Sprite);
 
+char1Sprite.width = 200;
+char1Sprite.height = 200;
+
+char1Sprite.x = 500;
+char1Sprite.y = 500;
+
 char1Sprite.anchor.set(0.5, 0.5);
 
 char1Sprite.interactive = true;
@@ -41,13 +47,22 @@ char1Sprite.on('pointerdown', function() {
 });
 
 document.addEventListener('keydown', function(e) {
-	if(e.key === 'ArrowRight')
+	if(e.key === 'ArrowRight' || e.key === 'd')
 		char1Sprite.x += 10;
-	if(e.key === 'ArrowLeft')
+	if(e.key === 'ArrowLeft' || e.key === 'a')
 		char1Sprite.x -= 10;
-	if(e.key === 'ArrowUp')
+	if(e.key === 'ArrowUp' || e.key === 'w')
 		char1Sprite.y -= 10;
-	if(e.key === 'ArrowDown')
+	if(e.key === 'ArrowDown' || e.key === 's')
 		char1Sprite.y += 10;
 
 })
+
+function loop(delta) {
+	const rect = new Graphics();
+	rect.beginFill(0xFFFFFF)
+	.drawReact(Math.random() * app.screen.width, Math.random() * app.screen.height, 10, 10)
+	.endFill()
+
+	app.stage.addChild(rect);
+}
