@@ -1,46 +1,68 @@
-const app = new PIXI.Application({
-  width: 800,
-  height: 600,
-  backgroundColor: 0x1099bb,
+const Application = PIXI.Application;
+
+const app = new Application({
+	width: 500,
+	height: 500,
+	transparent: false,
+	antialias: true
 });
+
+app.renderer.backgroundColor = 0x23395D;
+
+app.renderer.resize(window.innerWidth, window.innerHeight);
+
+app.renderer.view.style.position = 'absolute';
+
 document.body.appendChild(app.view);
 
-app.ticker.add((delta) => {
-  // Game loop logic here
+const Graphics = PIXI.Graphics;
+
+const rectangle = new Graphics();
+rectangle.beginFill(0xAA33BB)
+.lineStyle(4, 0xFFEA00)
+.drawRect(200, 200, 100, 120)
+.endFill();
+
+app.stage.addChild(rectangle);
+
+const char1Texture = PIXI.Texture.from('../assets/images/the_knight/Idle (1).png');
+const char1Sprite = new PIXI.Sprite(char1Texture);
+
+app.stage.addChild(char1Sprite);
+
+char1Sprite.width = 200;
+char1Sprite.height = 200;
+
+char1Sprite.x = 500;
+char1Sprite.y = 500;
+
+char1Sprite.anchor.set(0.5, 0.5);
+
+char1Sprite.interactive = true;
+char1Sprite.buttonmode = true;
+
+char1Sprite.on('pointerdown', function() {
+	char1Sprite.scale.x += 0.1;
+	char1Sprite.scale.y += 0.1;
 });
 
-PIXI.Loader.shared.add('character', 'assets/images/character.png').load(() => {
-  const character = new PIXI.Sprite(PIXI.Loader.shared.resources.character.texture);
-  character.anchor.set(0.5);
-  character.x = app.view.width / 2;
-  character.y = app.view.height / 2;
-  app.stage.addChild(character);
-});
+document.addEventListener('keydown', function(e) {
+	if(e.key === 'ArrowRight' || e.key === 'd')
+		char1Sprite.x += 10;
+	if(e.key === 'ArrowLeft' || e.key === 'a')
+		char1Sprite.x -= 10;
+	if(e.key === 'ArrowUp' || e.key === 'w')
+		char1Sprite.y -= 10;
+	if(e.key === 'ArrowDown' || e.key === 's')
+		char1Sprite.y += 10;
 
-const keys = {};
+})
 
-document.addEventListener('keydown', (e) => {
-  keys[e.code] = true;
-});
+function loop(delta) {
+	const rect = new Graphics();
+	rect.beginFill(0xFFFFFF)
+	.drawReact(Math.random() * app.screen.width, Math.random() * app.screen.height, 10, 10)
+	.endFill()
 
-document.addEventListener('keyup', (e) => {
-  keys[e.code] = false;
-});
-
-const speed = 5;
-
-app.ticker.add((delta) => {
-  if (keys['ArrowUp']) {
-    character.y -= speed * delta;
-  }
-  if (keys['ArrowDown']) {
-    character.y += speed * delta;
-  }
-  if (keys['ArrowLeft']) {
-    character.x -= speed * delta;
-  }
-  if (keys['ArrowRight']) {
-    character.x += speed * delta;
-  }
-});
-
+	app.stage.addChild(rect);
+}
