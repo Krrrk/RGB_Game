@@ -1,8 +1,8 @@
 const Application = PIXI.Application;
 
 const app = new Application({
-	width: 500,
-	height: 500,
+	width: 1920,
+	height: 1080,
 	transparent: false,
 	antialias: true
 });
