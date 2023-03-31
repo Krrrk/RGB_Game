@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx vite build; http-server"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,16 @@
   "bugs": {
     "url": "https://github.com/Krrrk/RGB_Game/issues"
   },
-  "homepage": "https://github.com/Krrrk/RGB_Game#readme"
+  "homepage": "https://github.com/Krrrk/RGB_Game#readme",
+  "dependencies": {
+    "pixi.js": "^7.2.3",
+    "typescript": "^5.0.3",
+    "vite": "^4.2.1",
+    "vite-cli": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "@types/pixi.js": "^5.0.0",
+    "http-server": "^14.1.1"
+  }
 }

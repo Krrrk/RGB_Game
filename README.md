@@ -3,3 +3,9 @@
 ## Basse was here
 ## Baiwei was here
 ## Chricke was here
+
+
+`npm install`
+
+`npm run dev`
+
