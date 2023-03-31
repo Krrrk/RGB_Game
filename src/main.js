@@ -1,3 +1,5 @@
+// Your main game file (e.g., main.js or index.js)
+
 const Application = PIXI.Application;
 
 const app = new Application({
@@ -6,8 +8,11 @@ const app = new Application({
 	transparent: false,
 	antialias: true
 });
+import { createBackground, updateBackground } from './background.js';
 
-app.renderer.backgroundColor = 0x23395D;
+createBackground(app);
+
+// app.renderer.backgroundColor = 0x23395D;
 
 app.renderer.resize(window.innerWidth, window.innerHeight);
 
