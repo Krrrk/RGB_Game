@@ -2,7 +2,7 @@
 import * as PIXI from 'pixi.js';
 
 import Menu from './views/menu';
-import { renderSprite } from './views/sprite.js';
+import { renderSprite } from './views/sprite.ts';
 import { renderWindow } from './views/renderer.js';
 import { startTicker } from './controllers/ticker.js';
 

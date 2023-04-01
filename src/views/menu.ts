@@ -1,7 +1,7 @@
 // views/menu.ts
 import * as PIXI from 'pixi.js';
 import Button from './button.ts';
-import { renderSprite } from './sprite.js';
+import { renderSprite } from './sprite.ts';
 
 export default class Menu {
 	private app: PIXI.Application;
