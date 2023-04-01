@@ -93,6 +93,7 @@ export default class Menu {
 		const buttons = this.optionsVisible ? this.optionsButtons : this.mainMenuButtons;
 		const selectedIndex = this.optionsVisible ? this.optionsMenuSelectedIndex : this.mainMenuSelectedIndex;
 		buttons[selectedIndex].text.style.fill = 'gray';
+		buttons[selectedIndex].setSelected(false);
 
 		if (['ArrowUp', 'w'].includes(key)) {
 			this.optionsVisible
@@ -106,6 +107,7 @@ export default class Menu {
 
 		const newSelectedIndex = this.optionsVisible ? this.optionsMenuSelectedIndex : this.mainMenuSelectedIndex;
 		buttons[newSelectedIndex].text.style.fill = 'white';
+		buttons[newSelectedIndex].setSelected(true);
 	}
 
 	private selectOption(): void {
@@ -182,6 +184,7 @@ export default class Menu {
 		this.selectedIndex = 0;
 		this.hideMainMenu();
 		this.optionsButtons.forEach(button => button.setVisible(true));
+		this.optionsButtons.forEach(button => button.setSelected(false));
 
 		document.addEventListener('keydown', this.handleOptionsKey);
 	}

@@ -1,10 +1,9 @@
-import * as PIXI from 'pixi.js'
+import * as PIXI from 'pixi.js';
+import { createIdleAnimation, createRunAnimation, createJumpAnimation } from './animations.ts';
 
 export { renderSprite, updateSprite };
 
-const char1Texture = PIXI.Texture.from('../assets/images/the_knight/Idle (1).png');
-let char1Velocity = { x: 0, y: 0};
-const char1Sprite = new PIXI.Sprite(char1Texture);
+let char1Velocity = { x: 0, y: 0 };
 let grounded = true;
 
 let jumpStartY = 0;
@@ -12,18 +11,47 @@ let jumpTime = 0;
 const jumpHeight = 200;
 const jumpDuration = 30;
 
-function renderSprite(app) {
-	app.stage.addChild(char1Sprite);
+const idleSprite = createIdleAnimation();
+const runSprite = createRunAnimation();
+const jumpSprite = createJumpAnimation();
 
-	char1Sprite.width = 200;
-	char1Sprite.height = 200;
-	char1Sprite.position.set(app.screen.width / 8, app.screen.height / 1.31);
-	char1Sprite.anchor.set(0.5, 0.5);
-	char1Sprite.interactive = true;
-	char1Sprite.buttonmode = true;
-	char1Sprite.on('pointerdown', function() {
-		char1Sprite.scale.x += 0.1;
-		char1Sprite.scale.y += 0.1;
+let activeSprite = idleSprite;
+
+function setActiveAnimation(animation) {
+	idleSprite.visible = false;
+	runSprite.visible = false;
+	jumpSprite.visible = false;
+	animation.visible = true;
+	animation.play();
+	activeSprite = animation;
+}
+
+function syncSpritePositions() {
+	[idleSprite, runSprite, jumpSprite].forEach(sprite => {
+		sprite.x = activeSprite.x;
+		sprite.y = activeSprite.y;
+		sprite.scale.x = activeSprite.scale.x;
+
+	});
+}
+
+function renderSprite(app) {
+	app.stage.addChild(idleSprite);
+	app.stage.addChild(runSprite);
+	app.stage.addChild(jumpSprite);
+
+	[idleSprite, runSprite, jumpSprite].forEach(sprite => {
+		sprite.width = 200;
+		sprite.height = 200;
+		sprite.position.set(app.screen.width / 8, app.screen.height / 1.31);
+		sprite.anchor.set(0.5, 0.5);
+		sprite.interactive = true;
+		sprite.buttonmode = true;
+	});
+
+	idleSprite.on('pointerdown', function() {
+		idleSprite.scale.x += 0.1;
+		idleSprite.scale.y += 0.1;
 	});
 
 	document.addEventListener('keydown', function(e) {
@@ -34,7 +62,7 @@ function renderSprite(app) {
 		if(e.key === 'ArrowUp' || e.key === 'w')
 			if (grounded === true) {
 				grounded = false;
-				jumpStartY = char1Sprite.position.y;
+				jumpStartY = jumpSprite.position.y;
 				jumpTime = 0;
 			}
 	})
@@ -59,25 +87,33 @@ function updateSprite(app, delta) {
 		char1Velocity.x = -5;
 	if (char1Velocity.y != 0)
 		console.log(char1Velocity.y);
-	if (!grounded) {
-		char1Velocity.y = char1Velocity.y / 1.05;
-	}
 
 	if (!grounded) {
 		jumpTime += delta;
-		char1Sprite.y = jumpStartY - parabolicJump(jumpTime, jumpHeight, jumpDuration);
+		jumpSprite.y = jumpStartY - parabolicJump(jumpTime, jumpHeight, jumpDuration);
 
-		if (char1Sprite.y >= app.screen.height / 1.31) {
+		if (jumpSprite.y >= app.screen.height / 1.31) {
 			grounded = true;
-			char1Sprite.y = app.screen.height / 1.31;
+			jumpSprite.y = app.screen.height / 1.31;
 		}
 	}
-	char1Sprite.x += char1Velocity.x * delta;
-	char1Sprite.y += char1Velocity.y * delta;
+
+	if (!grounded) {
+		setActiveAnimation(jumpSprite);
+	} else if (char1Velocity.x !== 0) {
+		setActiveAnimation(runSprite);
+	} else {
+		setActiveAnimation(idleSprite);
+	}
+
+	activeSprite.x += char1Velocity.x * delta;
+	activeSprite.y += char1Velocity.y * delta;
+
+	syncSpritePositions();
 
 	if (char1Velocity.x < 0)
-		char1Sprite.scale.x = -Math.abs(char1Sprite.scale.x);
+		activeSprite.scale.x = -Math.abs(activeSprite.scale.x);
 	if (char1Velocity.x > 0)
-		char1Sprite.scale.x = Math.abs(char1Sprite.scale.x);
+		activeSprite.scale.x = Math.abs(activeSprite.scale.x);
 }
 
