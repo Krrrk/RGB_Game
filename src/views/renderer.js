@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 
 export { renderWindow };
-import { createBackground } from './background.js';
+import { createBackground } from './background.ts';
 
 function renderWindow(app) {
 	app.renderer.resize(window.innerWidth, window.innerHeight);

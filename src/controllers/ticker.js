@@ -1,11 +1,11 @@
 export { startTicker };
-import { createBackground, updateBackground } from './../views/background.js';
-import { updateSprite } from './../views/sprite.js';
+// import { createBackground, updateBackground } from './../views/background.ts';
+import { updateSprite } from './../views/sprite.ts';
 
 function startTicker(app, menu) {
 	app.ticker.add(delta => {
 		menu.updateMenu(delta);
-		updateBackground(app, delta);
+		// updateBackground(app, delta);
 		updateSprite(app, delta);
 	});
 }
