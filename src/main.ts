@@ -1,10 +1,7 @@
 // Your main game file (e.g., main.js or index.js)
 import * as PIXI from 'pixi.js';
 
-import Menu from './views/menu';
-import { renderSprite } from './views/sprite.ts';
-import { renderWindow } from './views/renderer.js';
-import { startTicker } from './controllers/ticker.js';
+import GameController from './controllers/GameController.ts'
 
 const Application = PIXI.Application;
 
@@ -15,9 +12,5 @@ const app = new Application({
 });
 
 
+const gameController = new GameController(app);
 
-
-renderWindow(app);
-const menu = new Menu(app);
-startTicker(app, menu);
-// renderSprite(app);

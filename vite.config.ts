@@ -8,6 +8,7 @@ export default defineConfig({
       name: 'main.bundle',
       fileName: 'main.bundle',
     },
+	sourcemap: true,
   },
   plugins: [],
 });

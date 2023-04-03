@@ -1,24 +1,32 @@
 // views/menu.ts
 import * as PIXI from 'pixi.js';
 import Button from './button.ts';
-import { renderSprite } from './sprite.ts';
+// import { renderSprite } from './sprite.ts';
 
-export default class Menu {
-	private app: PIXI.Application;
+export enum SubMenu {
+  Main,
+  Options,
+  Credits,
+}
+
+export class Menu {
+
+	private app;
+	private gameController;
+	private currentMenu: SubMenu = SubMenu.Main;
 	private mainMenuChoices: string[];
 	private optionsChoices: string[];
-	private selectedIndex: number;
+	private mainMenuSelectedIndex: number;
+	private optionsMenuSelectedIndex: number;
 	private credits: string[];
 	private creditsTexts: PIXI.Text[];
 	private mainMenuButtons: Button[];
 	private optionsButtons: Button[];
 	private backButton: Button;
-	private optionsVisible: boolean = false;
-	private mainMenuSelectedIndex: number;
-	private optionsMenuSelectedIndex: number;
 
-	constructor(app: PIXI.Application) {
+	constructor(app, gameController) {
 		this.app = app;
+		this.gameController = gameController;
 		this.mainMenuChoices = ['Start Game', 'Options', 'Credits'];
 		this.optionsChoices = ['Volume', 'Music', 'Back'];
 		this.selectedIndex = 0;
@@ -30,14 +38,40 @@ export default class Menu {
 		this.createMenuButtons();
 		this.createCredits();
 		this.createOptions();
-		this.addKeyboardListeners();
+		this.showMenu(SubMenu.Main);
+	}
+
+	private showMenu(menu: SubMenu): void {
+		this.hideAllMenus();
+
+		switch (menu) {
+			case SubMenu.Main:
+				this.mainMenuButtons.forEach(button => button.setVisible(true));
+				break;
+			case SubMenu.Options:
+				this.optionsButtons.forEach(button => button.setVisible(true));
+				break;
+			case SubMenu.Credits:
+				this.creditsTexts.forEach(text => (text.visible = true));
+				this.backButton.setVisible(true);
+				break;
+		}
+
+		this.currentMenu = menu;
+	}
+
+	private hideAllMenus(): void {
+		this.mainMenuButtons.forEach(button => button.setVisible(false));
+		this.optionsButtons.forEach(button => button.setVisible(false));
+		this.creditsTexts.forEach(text => (text.visible = false));
+		this.backButton.setVisible(false);
 	}
 
 	private createMenuButtons(): void {
 		this.mainMenuButtons = this.mainMenuChoices.map((option, index) => {
 			const x = this.app.screen.width / 2;
 			const y = this.app.screen.height / 2 - this.mainMenuChoices.length * 20 / 2 + index * 50;
-			const selected = index === this.selectedIndex;
+			const selected = index === this.mainMenuSelectedIndex;
 			return new Button(option, x, y, this.app, selected);
 		});
 	}
@@ -69,7 +103,7 @@ export default class Menu {
 		this.optionsButtons = this.optionsChoices.map((option, index) => {
 			const x = this.app.screen.width / 2;
 			const y = this.app.screen.height / 2 - this.optionsChoices.length * 20 / 2 + index * 50;
-			const selected = index === this.selectedIndex;
+			const selected = index === this.optionsMenuSelectedIndex;
 			return new Button(option, x, y, this.app, selected);
 		});
 
@@ -79,72 +113,89 @@ export default class Menu {
 
 	}
 
-	private addKeyboardListeners(): void {
-		document.addEventListener('keydown', (e) => {
-			if (['ArrowUp', 'w', 'ArrowDown', 's'].includes(e.key)) {
-				this.updateMenu(e.key);
-			} else if (['e', 'Enter'].includes(e.key)) {
-				this.selectOption();
-			}
-		});
-	}
-
 	private updateMenu(key: string): void {
-		const buttons = this.optionsVisible ? this.optionsButtons : this.mainMenuButtons;
-		const selectedIndex = this.optionsVisible ? this.optionsMenuSelectedIndex : this.mainMenuSelectedIndex;
+		let buttons: Button[];
+		let selectedIndex: number;
+
+		switch (this.currentMenu) {
+			case SubMenu.Main:
+				buttons = this.mainMenuButtons;
+				selectedIndex = this.mainMenuSelectedIndex;
+				break;
+			case SubMenu.Options:
+				buttons = this.optionsButtons;
+				selectedIndex = this.optionsMenuSelectedIndex;
+				break;
+			default:
+				return;
+		}
+
 		buttons[selectedIndex].text.style.fill = 'gray';
 		buttons[selectedIndex].setSelected(false);
 
 		if (['ArrowUp', 'w'].includes(key)) {
-			this.optionsVisible
-				? (this.optionsMenuSelectedIndex = (this.optionsMenuSelectedIndex + 1) % buttons.length)
-				: (this.mainMenuSelectedIndex = (this.mainMenuSelectedIndex - 1 + buttons.length) % buttons.length);
+			selectedIndex = (selectedIndex - 1 + buttons.length) % buttons.length;
 		} else if (['ArrowDown', 's'].includes(key)) {
-			this.optionsVisible
-				? (this.optionsMenuSelectedIndex = (this.optionsMenuSelectedIndex - 1 + buttons.length) % buttons.length)
-				: (this.mainMenuSelectedIndex = (this.mainMenuSelectedIndex + 1) % buttons.length);
+			selectedIndex = (selectedIndex + 1) % buttons.length;
 		}
 
-		const newSelectedIndex = this.optionsVisible ? this.optionsMenuSelectedIndex : this.mainMenuSelectedIndex;
-		buttons[newSelectedIndex].text.style.fill = 'white';
-		buttons[newSelectedIndex].setSelected(true);
+		switch (this.currentMenu) {
+			case SubMenu.Main:
+				this.mainMenuSelectedIndex = selectedIndex;
+				break;
+			case SubMenu.Options:
+				this.optionsMenuSelectedIndex = selectedIndex;
+				break;
+		}
+
+		buttons[selectedIndex].text.style.fill = 'white';
+		buttons[selectedIndex].setSelected(true);
 	}
 
 	private selectOption(): void {
-		if (this.optionsVisible) {
-			const selectedOption = this.optionsChoices[this.optionsMenuSelectedIndex];
-			console.log(`Selected option: ${selectedOption}`);
+		switch (this.currentMenu) {
+			case SubMenu.Main:
+				const selectedMainOption = this.mainMenuChoices[this.mainMenuSelectedIndex];
+				console.log(`Selected option: ${selectedMainOption}`);
 
-			switch (selectedOption) {
-				case 'Volume':
-					// Handle volume option
-					break;
-				case 'Music':
-					// Handle music option
-					break;
-				case 'Back':
-					this.hideOptions();
-					break;
+				switch (selectedMainOption) {
+					case 'Start Game':
+						// Start the game
+						this.hideAllMenus();
+						this.gameController.startGame();
+						// renderSprite(this.app);
+						break;
+					case 'Options':
+						// Show the options menu
+						this.showMenu(SubMenu.Options);
+						break;
+					case 'Credits':
+						// Show the credits
+						this.showMenu(SubMenu.Credits);
+						break;
 				}
-		} else {
-			const selectedOption = this.mainMenuChoices[this.mainMenuSelectedIndex];
-			console.log(`Selected option: ${selectedOption}`);
+				break;
 
-			switch (selectedOption) {
-				case 'Start Game':
-					// Start the game
-					this.hideMainMenu();
-					renderSprite(this.app);
-					break;
-				case 'Options':
-					// Show the options menu
-					this.showOptions();
-					break;
-				case 'Credits':
-					// Show the credits
-					this.showCredits();
-					break;
-			}
+			case SubMenu.Options:
+				const selectedOption = this.optionsChoices[this.optionsMenuSelectedIndex];
+				console.log(`Selected option: ${selectedOption}`);
+
+				switch (selectedOption) {
+					case 'Volume':
+						// Handle volume option
+						break;
+					case 'Music':
+						// Handle music option
+						break;
+					case 'Back':
+						this.showMenu(SubMenu.Main);
+						break;
+				}
+				break;
+
+			case SubMenu.Credits:
+				this.showMenu(SubMenu.Main);
+				break;
 		}
 	}
 
@@ -155,71 +206,5 @@ export default class Menu {
 	private showMainMenu(): void {
 		this.mainMenuButtons.forEach(button => button.setVisible(true));
 	}
-
-	private showCredits(): void {
-		this.hideMainMenu();
-		this.creditsTexts.forEach(text => text.visible = true);
-		this.backButton.setVisible(true);
-
-		document.addEventListener('keydown', this.handleCreditsKey);
-	}
-
-	private hideCredits(): void {
-		this.showMainMenu();
-
-		this.creditsTexts.forEach(text => text.visible = false);
-		this.backButton.setVisible(false);
-
-		document.removeEventListener('keydown', this.handleCreditsKey);
-	}
-
-	private handleCreditsKey = (e: KeyboardEvent): void => {
-		if (['e', 'Enter'].includes(e.key)) {
-			this.hideCredits();
-		}
-	};
-
-	private showOptions(): void {
-		this.optionsVisible = true;
-		this.selectedIndex = 0;
-		this.hideMainMenu();
-		this.optionsButtons.forEach(button => button.setVisible(true));
-		this.optionsButtons.forEach(button => button.setSelected(false));
-
-		document.addEventListener('keydown', this.handleOptionsKey);
-	}
-
-	private hideOptions(): void {
-		this.showMainMenu();
-		this.optionsVisible = false;
-		this.optionsMenuSelectedIndex = 0;
-		this.optionsButtons.forEach(button => button.setVisible(false));
-
-		this.mainMenuButtons[this.mainMenuSelectedIndex].text.style.fill = 'white';
-
-		document.removeEventListener('keydown', this.handleOptionsKey);
-	}
-
-	private handleOptionsKey = (e: KeyboardEvent): void => {
-		if (['ArrowUp', 'w', 'ArrowDown', 's'].includes(e.key)) {
-			this.updateMenu(e.key);
-		} else if (['e', 'Enter'].includes(e.key)) {
-			const selectedOption = this.optionsChoices[this.selectedIndex];
-			console.log(`Selected option: ${selectedOption}`);
-
-			switch (selectedOption) {
-				case 'Volume':
-					// Handle volume option
-					break;
-				case 'Music':
-					// Handle music option
-					break;
-				case 'Back':
-					this.hideOptions();
-					break;
-			}
-		}
-	};
-
 }
 
