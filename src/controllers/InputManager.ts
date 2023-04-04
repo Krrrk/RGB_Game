@@ -32,9 +32,13 @@ export class InputManager {
             if (e.key === 'ArrowLeft' || e.key === 'a') {
 				this.sprite.move('left');
             }
-            if (e.key === 'ArrowUp' || e.key === 'w') {
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'Space') {
 				this.sprite.jump();
             }
+            if (e.key === 'e' || e.key === 'k') {
+				this.sprite.attack();
+			}
+
 		}
 		else if (this.gameController.getGameState() === this.gameController.GameState.StartMenu) {
 			if (['ArrowUp', 'w', 'ArrowDown', 's'].includes(e.key)) {

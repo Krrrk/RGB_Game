@@ -1,45 +1,84 @@
 // AnimationManager.ts
 import * as PIXI from 'pixi.js';
-import { createIdleAnimation, createRunAnimation, createJumpAnimation } from './animations';
+import { Animations } from './animations.ts';
 
 export class AnimationManager {
     constructor() {
-        this.idleSprite = createIdleAnimation();
-        this.runSprite = createRunAnimation();
-        this.jumpSprite = createJumpAnimation();
-        this.activeSprite = this.idleSprite;
+  //       this.idleSprite = createIdleAnimation();
+  //       this.runSprite = createRunAnimation();
+  //       this.jumpSprite = createJumpAnimation();
+		// this.groundAttackSprite = createGroundAttackAnimation();
+		// this.airAttackSprite = createAirAttackAnimation();
+		this.animations = new Animations();
+        this.activeSprite = this.animations.getAnimations('idle');
     }
 
-    setActiveAnimation(animationName, lookDirection) {
-        this.idleSprite.visible = false;
-        this.runSprite.visible = false;
-        this.jumpSprite.visible = false;
-		let newActiveSprite;
-        if (animationName === 'idle') {
-            newActiveSprite = this.idleSprite;
-        } else if (animationName === 'run') {
-            newActiveSprite = this.runSprite;
-        } else if (animationName === 'jump') {
-            newActiveSprite = this.jumpSprite;
-        }
+  //   setActiveAnimation(animationName, lookDirection) {
+		// for (const animation in this.animations.getAnimations()) {
+		// 	animation.visible = false;
+		// }
+		//
+		// let newActiveSprite = this.animations.getAnimations()[animationName];
+		//
+  //       if (newActiveSprite) {
+  //           newActiveSprite.visible = true;
+  //           newActiveSprite.play();
+		//
+		// 	if (lookDirection === 'left')
+		// 		newActiveSprite.scale.x = -Math.abs(newActiveSprite.scale.x);
+		// 	else if (lookDirection === 'right')
+		// 		newActiveSprite.scale.x = Math.abs(newActiveSprite.scale.x);
+  //           this.activeSprite = newActiveSprite;
+  //       }
+  //   }
 
-        if (newActiveSprite) {
-            newActiveSprite.visible = true;
-            newActiveSprite.play();
+  setActiveAnimation(animationName, lookDirection) {
+    const animations = this.animations.getAnimations();
 
-			if (lookDirection === 'left')
-				newActiveSprite.scale.x = -Math.abs(newActiveSprite.scale.x);
-			else if (lookDirection === 'right')
-				newActiveSprite.scale.x = Math.abs(newActiveSprite.scale.x);
-            this.activeSprite = newActiveSprite;
+    for (const key in animations) {
+        if (animations.hasOwnProperty(key)) {
+            const sprite = animations[key];
+            sprite.visible = false;
         }
     }
+
+    let newActiveSprite = animations[animationName];
+
+    if (newActiveSprite) {
+        newActiveSprite.visible = true;
+        newActiveSprite.play();
+
+        if (lookDirection === 'left') {
+            newActiveSprite.scale.x = -Math.abs(newActiveSprite.scale.x);
+        } else if (lookDirection === 'right') {
+            newActiveSprite.scale.x = Math.abs(newActiveSprite.scale.x);
+        }
+        this.activeSprite = newActiveSprite;
+    }
+}
+
+
+	// syncSpritePositions() {
+	// 	// for (const sprite in this.animations.getAnimations()) {
+	// 	    const animations = this.animations.getAnimations();
+	//
+ //    for (const key in animations) {
+	//
+	// 		key.x = 0;
+	// 		key.y = 0;
+	// 	}
+	// }
 
 	syncSpritePositions() {
-		[this.idleSprite, this.runSprite, this.jumpSprite].forEach(sprite => {
-			sprite.x = 0;
-			sprite.y = 0;
-		});
-	}
+    const animations = this.animations.getAnimations();
+
+    for (const key in animations) {
+        if (animations.hasOwnProperty(key)) {
+            const sprite = animations[key];
+            sprite.x = 0;
+            sprite.y = 0;
+        }
+    }
+}
 }
 

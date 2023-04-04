@@ -5,7 +5,12 @@ export class Attack {
 		// Initialize your attack properties here
 	}
 
-	performAttack() {
+	performGroundAttack() {
+		console.log('Performing attack');
+		// Implement your attack logic here
+	}
+
+	performAirAttack() {
 		console.log('Performing attack');
 		// Implement your attack logic here
 	}
